@@ -330,15 +330,16 @@
                 <xsl:choose>
                     <xsl:when test="$supply-missing-zeros">
                         <!-- Second and third numbers if present, or zero as default-->
-                        <xsl:sequence select="(regex-group(3), '0')[.][1]"/>
-                        <xsl:sequence select="(regex-group(5), '0')[.][1]"/>
+                        <xsl:sequence select="(
+                            (regex-group(3), '0')[.][1],
+                            (regex-group(5), '0')[.][1]
+                            )"/>
                     </xsl:when>
                     <xsl:otherwise>
                         <!-- Second and third numbers. If either one is not present,
                         these instructions will return an empty string. Note that an
                         empty string cannot be converted to xs:integer. -->
-                        <xsl:sequence select="regex-group(3)"/>
-                        <xsl:sequence select="regex-group(5)"/>
+                        <xsl:sequence select="(regex-group(3), regex-group(5))"/>
                     </xsl:otherwise>
                 </xsl:choose>
             </xsl:matching-substring>

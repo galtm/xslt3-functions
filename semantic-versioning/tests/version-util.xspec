@@ -13,6 +13,13 @@
             </x:call>
             <x:expect label="A is newer" select="xs:integer(1)"/>
         </x:scenario>
+        <x:scenario label="Difference in 1st number, swapping order of input parameters">
+            <x:call function="x3f:semver-compare">
+                <x:param select="'1.20.30'"/>
+                <x:param select="'2.10.20'"/>
+            </x:call>
+            <x:expect label="A is older" select="xs:integer(-1)"/>
+        </x:scenario>
         <x:scenario label="Difference in 2nd number">
             <x:call function="x3f:semver-compare">
                 <x:param select="'5.2.10'"/>
@@ -45,12 +52,26 @@
                 </x:call>
                 <x:expect label="A is older" select="xs:integer(-1)"/>
             </x:scenario>
-            <x:scenario label="the A part is all-numeric, while B part has non-numeric character">
+            <x:scenario label="A equals B plus an extra part">
+                <x:call function="x3f:semver-compare">
+                    <x:param select="'1.0.0-beta.2'"/>
+                    <x:param select="'1.0.0-beta'"/>
+                </x:call>
+                <x:expect label="A is newer" select="xs:integer(1)"/>
+            </x:scenario>
+            <x:scenario label="the A part that differs from B is all-numeric, while B part has non-numeric character">
                 <x:call function="x3f:semver-compare">
                     <x:param select="'1.0.0-alpha.1'"/>
                     <x:param select="'1.0.0-alpha.beta'"/>
                 </x:call>
                 <x:expect label="A is older" select="xs:integer(-1)"/>
+            </x:scenario>
+            <x:scenario label="the B part that differs from A is all-numeric, while A part has non-numeric character">
+                <x:call function="x3f:semver-compare">
+                    <x:param select="'1.0.0-alpha.beta'"/>
+                    <x:param select="'1.0.0-alpha.1'"/>
+                </x:call>
+                <x:expect label="A is newer" select="xs:integer(1)"/>
             </x:scenario>
             <x:scenario label="both parts have non-numeric characters">
                 <x:call function="x3f:semver-compare">
@@ -66,14 +87,14 @@
                 </x:call>
                 <x:expect label="A is older because beta is before rc in ASCII sequence" select="xs:integer(-1)"/>
             </x:scenario>
-            <x:scenario label="both parts are all-numeric">
+            <x:scenario label="both parts that differ are all-numeric">
                 <x:call function="x3f:semver-compare">
                     <x:param select="'1.0.0-beta.2'"/>
                     <x:param select="'1.0.0-beta.11'"/>
                 </x:call>
                 <x:expect label="A is older because 2 is before 11 as numbers" select="xs:integer(-1)"/>
             </x:scenario>
-            <x:scenario label="both parts are all-numeric, swapping order of input parameters">
+            <x:scenario label="both parts that differ are all-numeric, swapping order of input parameters">
                 <x:call function="x3f:semver-compare">
                     <x:param select="'1.0.0-beta.11'"/>
                     <x:param select="'1.0.0-beta.2'"/>
@@ -86,7 +107,14 @@
                     <x:param select="'1.0.0'"/>
                 </x:call>
                 <x:expect label="A is older" select="xs:integer(-1)"/>
-            </x:scenario>            
+            </x:scenario>
+            <x:scenario label="B has a pre-release part and A does not">
+                <x:call function="x3f:semver-compare">
+                    <x:param select="'1.0.0'"/>
+                    <x:param select="'1.0.0-rc.1'"/>
+                </x:call>
+                <x:expect label="A is newer" select="xs:integer(1)"/>
+            </x:scenario>
         </x:scenario>
         <x:scenario label="A and B differ only in build metadata, ">
             <x:scenario label="with pre-release string">
